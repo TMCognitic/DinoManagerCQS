@@ -1,6 +1,8 @@
 ﻿using DinoManager.Api.Models.Dtos;
-using DinoManager.Bll.Entities;
-using DinoManager.Bll.Repositories;
+using DinoManager.Domain.Commands;
+using DinoManager.Domain.Entities;
+using DinoManager.Domain.Queries;
+using DinoManager.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -21,15 +23,15 @@ namespace DinoManager.Api.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_dinoRepository.Get());
+            return Ok(_dinoRepository.Execute(new GetAllDinosaureQuery()));
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            Dino? dino = _dinoRepository.Get(id);
+            Dino? dino = _dinoRepository.Execute(new GetDinoByIdQuery(id));
 
-            if(dino is null)
+            if (dino is null)
             {
                 return NotFound();
             }
@@ -37,11 +39,11 @@ namespace DinoManager.Api.Controllers
             return Ok(dino);
         }
 
-        // POST api/<DinoController>
+        //// POST api/<DinoController>
         [HttpPost]
         public IActionResult Post([FromBody] AjoutDinoDto dto)
         {
-            if(!_dinoRepository.Create(new Dino(dto.Espece, dto.Poids, dto.Taille)))
+            if (!_dinoRepository.Execute(new CreateDinoCommand(dto.Espece, dto.Poids, dto.Taille)))
             {
                 return BadRequest();
             }
@@ -52,7 +54,7 @@ namespace DinoManager.Api.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] UpdateDinoDto dto)
         {
-            if (!_dinoRepository.Update(id, new Dino(dto.Espece, dto.Poids, dto.Taille)))
+            if (!_dinoRepository.Execute(new UpdateDinoCommand(id, dto.Espece, dto.Poids, dto.Taille)))
             {
                 return BadRequest();
             }
@@ -63,7 +65,7 @@ namespace DinoManager.Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (!_dinoRepository.Delete(id))
+            if (!_dinoRepository.Execute(new DeleteDinoCommand(id)))
             {
                 return BadRequest();
             }

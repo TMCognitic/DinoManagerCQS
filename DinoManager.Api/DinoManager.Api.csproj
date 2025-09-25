@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DinoManager.Bll\DinoManager.Bll.csproj" />
+    <ProjectReference Include="..\DinoManager.Domain\DinoManager.Domain.csproj" />
   </ItemGroup>
 
 </Project>

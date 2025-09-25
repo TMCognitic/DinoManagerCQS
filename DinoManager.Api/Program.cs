@@ -1,9 +1,8 @@
-using DR = DinoManager.Dal.Repositories;
-using DS = DinoManager.Dal.Services;
-using DinoManager.Bll.Repositories;
-using DinoManager.Bll.Services;
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
+using DinoManager.Domain;
+using DinoManager.Domain.Repositories;
+using DinoManager.Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +13,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<DbConnection>(sp => new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=DinoManager.Database;Integrated Security=True;Encrypt=True;Trust Server Certificate=True;"));
-builder.Services.AddScoped<DR.IDinoRepository, DS.DinoService>();
 builder.Services.AddScoped<IDinoRepository, DinoService>();
+
 
 var app = builder.Build();
 

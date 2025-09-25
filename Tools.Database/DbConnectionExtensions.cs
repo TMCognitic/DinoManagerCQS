@@ -15,7 +15,7 @@ namespace Tools.Database
             }
         }
 
-        public static object? ExecuteNonQuery(this DbConnection dbConnection, string query, bool isStoredProcedure = false, object? parameters = null)
+        public static int ExecuteNonQuery(this DbConnection dbConnection, string query, bool isStoredProcedure = false, object? parameters = null)
         {
             using (DbCommand dbCommand = CreateCommand(dbConnection, query, isStoredProcedure, parameters))
             {

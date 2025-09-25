@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DinoManager.Bll.Entities
+namespace DinoManager.Domain.Entities
 {
     public class Dino
     {
@@ -14,13 +14,8 @@ namespace DinoManager.Bll.Entities
         public int Taille { get; set; }
 
         internal Dino(int id, string espece, int poids, int taille) 
-            : this (espece, poids, taille)
         {
             Id = id;
-        }
-
-        public Dino(string espece, int poids, int taille)
-        {
             Espece = espece;
             Poids = poids;
             Taille = taille;
