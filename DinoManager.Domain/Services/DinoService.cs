@@ -4,6 +4,7 @@ using DinoManager.Domain.Mappers;
 using DinoManager.Domain.Queries;
 using DinoManager.Domain.Repositories;
 using System.Data.Common;
+using Tools.Cqs.Queries;
 using Tools.Cqs.Results;
 using Tools.Database;
 
@@ -19,13 +20,13 @@ namespace DinoManager.Domain.Services
             _dbConnection.Open();
         }
 
-        public ICqsResult<IEnumerable<Dino>> Execute(GetAllDinosaureQuery query)
+        public async Task<ICqsResult<IEnumerable<Dino>>> ExecuteAsync(GetAllDinosaureQuery query)
         {
             try
             {
-                IEnumerable<Dino> result = _dbConnection.ExecuteReader("SELECT [Id], [Espece], [Poids], [Taille] FROM [Dinosaure];", dr => dr.ToDino()).ToList();
+                IEnumerable<Dino> result = await _dbConnection.ExecuteReaderAsync("SELECT [Id], [Espece], [Poids], [Taille] FROM [Dinosaure];", dr => dr.ToDino()).ToList();
 
-                return CqsResult<IEnumerable<Dino>>.Success(result);
+                return CqsResult<IEnumerable<Dino>>.Success(result.ToList());
             }
             catch (Exception ex)
             {
@@ -50,11 +51,11 @@ namespace DinoManager.Domain.Services
             }
         }
 
-        public ICqsResult Execute(CreateDinoCommand command)
+        public async Task<ICqsResult> ExecuteAsync(CreateDinoCommand command)
         {
             try
             {
-                _dbConnection.ExecuteNonQuery("AjoutDinosaure", true, command);
+                await _dbConnection.ExecuteNonQueryAsync("AjoutDinosaure", true, command);
                 return CqsResult.Success();
             }
             catch (Exception ex)

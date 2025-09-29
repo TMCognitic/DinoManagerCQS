@@ -12,4 +12,10 @@ namespace Tools.Cqs.Commands
     {
         ICqsResult Execute(TCommand command);
     }
+
+    public interface IAsyncCommandHandler<TCommand>
+        where TCommand : ICommandDefinition
+    {
+        Task<ICqsResult> ExecuteAsync(TCommand command);
+    }
 }

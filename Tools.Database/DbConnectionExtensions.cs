@@ -23,6 +23,14 @@ namespace Tools.Database
             }
         }
 
+        public async static Task<int> ExecuteNonQueryAsync(this DbConnection dbConnection, string query, bool isStoredProcedure = false, object? parameters = null)
+        {
+            using (DbCommand dbCommand = CreateCommand(dbConnection, query, isStoredProcedure, parameters))
+            {
+                return await dbCommand.ExecuteNonQueryAsync();
+            }
+        }
+
         public static IEnumerable<TResult> ExecuteReader<TResult>(this DbConnection dbConnection, string query, Func<IDataRecord, TResult> mapper, bool isStoredProcedure = false, object? parameters = null)
         {
             using (DbCommand dbCommand = CreateCommand(dbConnection, query, isStoredProcedure, parameters))
@@ -30,6 +38,20 @@ namespace Tools.Database
                 using (DbDataReader dbDataReader = dbCommand.ExecuteReader())
                 {
                     while (dbDataReader.Read())
+                    {
+                        yield return mapper(dbDataReader);
+                    }
+                }
+            }
+        }
+
+        public async static IAsyncEnumerable<TResult> ExecuteReaderAsync<TResult>(this DbConnection dbConnection, string query, Func<IDataRecord, TResult> mapper, bool isStoredProcedure = false, object? parameters = null)
+        {
+            using (DbCommand dbCommand = CreateCommand(dbConnection, query, isStoredProcedure, parameters))
+            {
+                using (DbDataReader dbDataReader = await dbCommand.ExecuteReaderAsync())
+                {
+                    while (await dbDataReader.ReadAsync())
                     {
                         yield return mapper(dbDataReader);
                     }

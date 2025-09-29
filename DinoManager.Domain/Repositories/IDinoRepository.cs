@@ -7,10 +7,10 @@ using Tools.Cqs.Queries;
 namespace DinoManager.Domain.Repositories
 {
     public interface IDinoRepository :
-        ICommandHandler<CreateDinoCommand>,
+        IAsyncCommandHandler<CreateDinoCommand>,
         ICommandHandler<DeleteDinoCommand>,
         ICommandHandler<UpdateDinoCommand>,
-        IQueryHandler<GetAllDinosaureQuery, IEnumerable<Dino>>,
+        IAsyncQueryHandler<GetAllDinosaureQuery, IEnumerable<Dino>>,
         IQueryHandler<GetDinoByIdQuery, Dino>
     {
     }

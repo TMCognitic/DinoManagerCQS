@@ -22,9 +22,9 @@ namespace DinoManager.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            ICqsResult<IEnumerable<Dino>> result = _dinoRepository.Execute(new GetAllDinosaureQuery());
+            ICqsResult<IEnumerable<Dino>> result = await _dinoRepository.ExecuteAsync(new GetAllDinosaureQuery());
 
             if (result.IsFailure) return BadRequest(result);
 
@@ -46,9 +46,9 @@ namespace DinoManager.Api.Controllers
 
         //// POST api/<DinoController>
         [HttpPost]
-        public IActionResult Post([FromBody] AjoutDinoDto dto)
+        public async Task<IActionResult> Post([FromBody] AjoutDinoDto dto)
         {
-            ICqsResult result = _dinoRepository.Execute(new CreateDinoCommand(dto.Espece, dto.Poids, dto.Taille));
+            ICqsResult result = await _dinoRepository.ExecuteAsync(new CreateDinoCommand(dto.Espece, dto.Poids, dto.Taille));
 
             if (result.IsFailure)
             {
@@ -79,6 +79,6 @@ namespace DinoManager.Api.Controllers
             }
 
             return NoContent();
-        }
+        }        
     }
 }

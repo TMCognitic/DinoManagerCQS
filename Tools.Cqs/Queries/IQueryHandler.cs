@@ -7,4 +7,10 @@ namespace Tools.Cqs.Queries
     {
         ICqsResult<TResult> Execute(TQuery query);
     }
+
+    public interface IAsyncQueryHandler<TQuery, TResult>
+        where TQuery : IQueryDefinition<TResult>
+    {
+        Task<ICqsResult<TResult>> ExecuteAsync(TQuery query);
+    }
 }
