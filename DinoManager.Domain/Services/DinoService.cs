@@ -4,6 +4,7 @@ using DinoManager.Domain.Mappers;
 using DinoManager.Domain.Queries;
 using DinoManager.Domain.Repositories;
 using System.Data.Common;
+using Tools.Cqs.Results;
 using Tools.Database;
 
 namespace DinoManager.Domain.Services
@@ -18,56 +19,83 @@ namespace DinoManager.Domain.Services
             _dbConnection.Open();
         }
 
-        public IEnumerable<Dino> Execute(GetAllDinosaureQuery query)
+        public ICqsResult<IEnumerable<Dino>> Execute(GetAllDinosaureQuery query)
         {
-            return _dbConnection.ExecuteReader("SELECT [Id], [Espece], [Poids], [Taille] FROM [Dinosaure];", dr => dr.ToDino()).ToList();
+            try
+            {
+                IEnumerable<Dino> result = _dbConnection.ExecuteReader("SELECT [Id], [Espece], [Poids], [Taille] FROM [Dinosaure];", dr => dr.ToDino()).ToList();
+
+                return CqsResult<IEnumerable<Dino>>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                return CqsResult<IEnumerable<Dino>>.Failure(ex.Message);
+            }
         }
 
-        public bool Execute(CreateDinoCommand command)
+        public ICqsResult<Dino> Execute(GetDinoByIdQuery query)
+        {
+            try
+            {
+                Dino? dino = _dbConnection.ExecuteReader("SELECT [Id], [Espece], [Poids], [Taille] FROM [Dinosaure] WHERE Id = @Id;", dr => dr.ToDino(), parameters: query).SingleOrDefault();
+
+                if (dino is null)
+                    return CqsResult<Dino>.Failure("Dino Not Found");
+
+                return CqsResult<Dino>.Success(dino);
+            }
+            catch (Exception ex)
+            {
+                return CqsResult<Dino>.Failure(ex.Message);
+            }
+        }
+
+        public ICqsResult Execute(CreateDinoCommand command)
         {
             try
             {
                 _dbConnection.ExecuteNonQuery("AjoutDinosaure", true, command);
-                return true;
+                return CqsResult.Success();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return CqsResult.Failure(ex.Message);
             }
         }
 
-        public Dino? Execute(GetDinoByIdQuery query)
-        {
-            return _dbConnection.ExecuteReader("SELECT [Id], [Espece], [Poids], [Taille] FROM [Dinosaure] WHERE Id = @Id;", dr => dr.ToDino(), parameters: query).SingleOrDefault();
-        }
+        
 
-        public bool Execute(DeleteDinoCommand command)
+        public ICqsResult Execute(DeleteDinoCommand command)
         {
             try
             {
                 int rows = _dbConnection.ExecuteNonQuery("DeleteDinosaure", true, command);
-                
-                if(rows == 1)
-                    return true;
 
-                return false;
+                if (rows == 1)
+                    return CqsResult.Success();
+
+                return CqsResult.Failure("Dino not found");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return CqsResult.Failure(ex.Message);
             }
         }
 
-        public bool Execute(UpdateDinoCommand command)
+        public ICqsResult Execute(UpdateDinoCommand command)
         {
             try
             {
-                _dbConnection.ExecuteNonQuery("UpdateDinosaure", true, command);
-                return true;
+                int rows = _dbConnection.ExecuteNonQuery("UpdateDinosaure", true, command);
+                
+                if (rows == 1)
+                    return CqsResult.Success();
+
+                return CqsResult.Failure("Dino not found");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return CqsResult.Failure(ex.Message);
             }
         }
     }

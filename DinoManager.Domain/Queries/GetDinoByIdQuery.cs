@@ -8,7 +8,7 @@ using Tools.Cqs.Queries;
 
 namespace DinoManager.Domain.Queries
 {
-    public class GetDinoByIdQuery : IQueryDefinition<Dino?>
+    public class GetDinoByIdQuery : IQueryDefinition<Dino>
     {
         public int Id { get; }
         public GetDinoByIdQuery(int id)

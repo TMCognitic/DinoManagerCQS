@@ -11,7 +11,7 @@ namespace DinoManager.Domain.Repositories
         ICommandHandler<DeleteDinoCommand>,
         ICommandHandler<UpdateDinoCommand>,
         IQueryHandler<GetAllDinosaureQuery, IEnumerable<Dino>>,
-        IQueryHandler<GetDinoByIdQuery, Dino?>
+        IQueryHandler<GetDinoByIdQuery, Dino>
     {
     }
 }
